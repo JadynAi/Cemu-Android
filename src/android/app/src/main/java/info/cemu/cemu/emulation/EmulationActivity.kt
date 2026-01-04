@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import info.cemu.cemu.BuildConfig
+import info.cemu.cemu.common.android.display.DisplayUtils
 import info.cemu.cemu.common.ui.components.ActivityContent
 import info.cemu.cemu.common.ui.localization.TranslatableContent
 import kotlin.system.exitProcess
@@ -55,6 +56,7 @@ class EmulationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DisplayUtils.init(this)
         sensorManager = SensorManager(this)
         sensorManager.setDeviceRotationProvider { display.rotation }
 
