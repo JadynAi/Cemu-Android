@@ -158,7 +158,7 @@ fun EmulationScreen(
     ) {
         Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { contentPadding ->
             Box(Modifier.padding(contentPadding)) {
-                EmulationSurfaces(viewModel)
+                EmulationSurfaces(viewModel, isEmulationInitialized = isEmulationInitialized)
 
                 InputOverlaySurface(
                     isVisible = isInputOverlayVisible,
@@ -371,7 +371,7 @@ private fun TextButtonItem(
 }
 
 @Composable
-private fun EmulationSurfaces(viewModel: EmulationViewModel) {
+private fun EmulationSurfaces(viewModel: EmulationViewModel, isEmulationInitialized: Boolean) {
     val context = LocalContext.current
     val activity = context as? Activity
     val sideMenuState by viewModel.sideMenuState.collectAsState()
@@ -380,8 +380,10 @@ private fun EmulationSurfaces(viewModel: EmulationViewModel) {
     val padSurfaceDimensions by viewModel.padSurfaceDimensions.collectAsState()
 
     val padDisplay = if (activity != null) rememberPadDisplay(activity) else null
+    val isPadVisibleEffective = sideMenuState.isPadVisible && isEmulationInitialized
+
     val usePadPresentation =
-        sideMenuState.isPadVisible && sideMenuState.isPadOnExternalDisplay && padDisplay != null
+        isPadVisibleEffective && sideMenuState.isPadOnExternalDisplay && padDisplay != null
 
     val mainTouchListener = remember { CanvasOnTouchListener() }
     val padTouchListener = remember { CanvasOnTouchListener() }
@@ -439,7 +441,7 @@ private fun EmulationSurfaces(viewModel: EmulationViewModel) {
             afterInit = { viewModel.initializeEmulation() },
         )
 
-        if (sideMenuState.isPadVisible && !usePadPresentation) {
+        if (isPadVisibleEffective && !usePadPresentation) {
             EmulationSurface(
                 modifier = itemModifier,
                 holderCallback = viewModel.padHolderCallback,
